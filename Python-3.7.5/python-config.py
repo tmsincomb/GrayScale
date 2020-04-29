@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.7m
+#!/home/605/sincomb/.local/bin/python3.7m
 # -*- python -*-
 
 # Keep this script in sync with python-config.sh.in
