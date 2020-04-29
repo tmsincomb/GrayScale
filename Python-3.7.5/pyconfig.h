@@ -106,7 +106,7 @@
 /* #undef HAVE_BROKEN_UNSETENV */
 
 /* Has builtin atomics */
-/* #undef HAVE_BUILTIN_ATOMIC */
+#define HAVE_BUILTIN_ATOMIC 1
 
 /* Define to 1 if you have the 'chflags' function. */
 /* #undef HAVE_CHFLAGS */
@@ -154,40 +154,40 @@
 /* #undef HAVE_CTERMID_R */
 
 /* Define if you have the 'filter' function. */
-/* #undef HAVE_CURSES_FILTER */
+#define HAVE_CURSES_FILTER 1
 
 /* Define to 1 if you have the <curses.h> header file. */
-/* #undef HAVE_CURSES_H */
+#define HAVE_CURSES_H 1
 
 /* Define if you have the 'has_key' function. */
-/* #undef HAVE_CURSES_HAS_KEY */
+#define HAVE_CURSES_HAS_KEY 1
 
 /* Define if you have the 'immedok' function. */
-/* #undef HAVE_CURSES_IMMEDOK */
+#define HAVE_CURSES_IMMEDOK 1
 
 /* Define if you have the 'is_pad' function or macro. */
-/* #undef HAVE_CURSES_IS_PAD */
+#define HAVE_CURSES_IS_PAD 1
 
 /* Define if you have the 'is_term_resized' function. */
-/* #undef HAVE_CURSES_IS_TERM_RESIZED */
+#define HAVE_CURSES_IS_TERM_RESIZED 1
 
 /* Define if you have the 'resizeterm' function. */
-/* #undef HAVE_CURSES_RESIZETERM */
+#define HAVE_CURSES_RESIZETERM 1
 
 /* Define if you have the 'resize_term' function. */
-/* #undef HAVE_CURSES_RESIZE_TERM */
+#define HAVE_CURSES_RESIZE_TERM 1
 
 /* Define if you have the 'syncok' function. */
-/* #undef HAVE_CURSES_SYNCOK */
+#define HAVE_CURSES_SYNCOK 1
 
 /* Define if you have the 'typeahead' function. */
-/* #undef HAVE_CURSES_TYPEAHEAD */
+#define HAVE_CURSES_TYPEAHEAD 1
 
 /* Define if you have the 'use_env' function. */
-/* #undef HAVE_CURSES_USE_ENV */
+#define HAVE_CURSES_USE_ENV 1
 
 /* Define if you have the 'wchgat' function. */
-/* #undef HAVE_CURSES_WCHGAT */
+#define HAVE_CURSES_WCHGAT 1
 
 /* Define to 1 if you have the declaration of `isfinite', and to 0 if you
    don't. */
@@ -405,7 +405,7 @@
 #define HAVE_GETC_UNLOCKED 1
 
 /* Define to 1 if you have the `getentropy' function. */
-/* #undef HAVE_GETENTROPY */
+#define HAVE_GETENTROPY 1
 
 /* Define to 1 if you have the `getgrouplist' function. */
 #define HAVE_GETGROUPLIST 1
@@ -462,10 +462,10 @@
 #define HAVE_GETPWENT 1
 
 /* Define to 1 if the getrandom() function is available */
-/* #undef HAVE_GETRANDOM */
+#define HAVE_GETRANDOM 1
 
 /* Define to 1 if the Linux getrandom() syscall is available */
-/* #undef HAVE_GETRANDOM_SYSCALL */
+#define HAVE_GETRANDOM_SYSCALL 1
 
 /* Define to 1 if you have the `getresgid' function. */
 #define HAVE_GETRESGID 1
@@ -571,7 +571,7 @@
 #define HAVE_LIBINTL_H 1
 
 /* Define if you have the readline library (-lreadline). */
-/* #undef HAVE_LIBREADLINE */
+#define HAVE_LIBREADLINE 1
 
 /* Define to 1 if you have the `resolv' library (-lresolv). */
 /* #undef HAVE_LIBRESOLV */
@@ -589,13 +589,13 @@
 #define HAVE_LINKAT 1
 
 /* Define to 1 if you have the <linux/can/bcm.h> header file. */
-/* #undef HAVE_LINUX_CAN_BCM_H */
+#define HAVE_LINUX_CAN_BCM_H 1
 
 /* Define to 1 if you have the <linux/can.h> header file. */
 #define HAVE_LINUX_CAN_H 1
 
 /* Define if compiling using Linux 3.6 or later. */
-/* #undef HAVE_LINUX_CAN_RAW_FD_FRAMES */
+#define HAVE_LINUX_CAN_RAW_FD_FRAMES 1
 
 /* Define to 1 if you have the <linux/can/raw.h> header file. */
 #define HAVE_LINUX_CAN_RAW_H 1
@@ -610,7 +610,7 @@
 #define HAVE_LINUX_TIPC_H 1
 
 /* Define to 1 if you have the <linux/vm_sockets.h> header file. */
-/* #undef HAVE_LINUX_VM_SOCKETS_H */
+#define HAVE_LINUX_VM_SOCKETS_H 1
 
 /* Define to 1 if you have the `lockf' function. */
 #define HAVE_LOCKF 1
@@ -667,7 +667,7 @@
 #define HAVE_MREMAP 1
 
 /* Define to 1 if you have the <ncurses.h> header file. */
-/* #undef HAVE_NCURSES_H */
+#define HAVE_NCURSES_H 1
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 /* #undef HAVE_NDIR_H */
@@ -721,10 +721,10 @@
 #define HAVE_PREADV 1
 
 /* Define to 1 if you have the `preadv2' function. */
-/* #undef HAVE_PREADV2 */
+#define HAVE_PREADV2 1
 
 /* Define if you have the 'prlimit' functions. */
-/* #undef HAVE_PRLIMIT */
+#define HAVE_PRLIMIT 1
 
 /* Define to 1 if you have the <process.h> header file. */
 /* #undef HAVE_PROCESS_H */
@@ -763,7 +763,7 @@
 #define HAVE_PWRITEV 1
 
 /* Define to 1 if you have the `pwritev2' function. */
-/* #undef HAVE_PWRITEV2 */
+#define HAVE_PWRITEV2 1
 
 /* Define to 1 if you have the `readlink' function. */
 #define HAVE_READLINK 1
@@ -781,28 +781,28 @@
 #define HAVE_RENAMEAT 1
 
 /* Define if readline supports append_history */
-/* #undef HAVE_RL_APPEND_HISTORY */
+#define HAVE_RL_APPEND_HISTORY 1
 
 /* Define if you can turn off readline's signal handling. */
-/* #undef HAVE_RL_CATCH_SIGNAL */
+#define HAVE_RL_CATCH_SIGNAL 1
 
 /* Define if you have readline 2.2 */
-/* #undef HAVE_RL_COMPLETION_APPEND_CHARACTER */
+#define HAVE_RL_COMPLETION_APPEND_CHARACTER 1
 
 /* Define if you have readline 4.0 */
-/* #undef HAVE_RL_COMPLETION_DISPLAY_MATCHES_HOOK */
+#define HAVE_RL_COMPLETION_DISPLAY_MATCHES_HOOK 1
 
 /* Define if you have readline 4.2 */
-/* #undef HAVE_RL_COMPLETION_MATCHES */
+#define HAVE_RL_COMPLETION_MATCHES 1
 
 /* Define if you have rl_completion_suppress_append */
-/* #undef HAVE_RL_COMPLETION_SUPPRESS_APPEND */
+#define HAVE_RL_COMPLETION_SUPPRESS_APPEND 1
 
 /* Define if you have readline 4.0 */
-/* #undef HAVE_RL_PRE_INPUT_HOOK */
+#define HAVE_RL_PRE_INPUT_HOOK 1
 
 /* Define if you have readline 4.0 */
-/* #undef HAVE_RL_RESIZE_TERMINAL */
+#define HAVE_RL_RESIZE_TERMINAL 1
 
 /* Define to 1 if you have the `round' function. */
 #define HAVE_ROUND 1
@@ -928,7 +928,7 @@
 #define HAVE_SNPRINTF 1
 
 /* struct sockaddr_alg (linux/if_alg.h) */
-/* #undef HAVE_SOCKADDR_ALG */
+#define HAVE_SOCKADDR_ALG 1
 
 /* Define if sockaddr has sa_len member */
 /* #undef HAVE_SOCKADDR_SA_LEN */
@@ -965,7 +965,7 @@
 #define HAVE_STDLIB_H 1
 
 /* Has stdatomic.h with atomic_int */
-/* #undef HAVE_STD_ATOMIC */
+#define HAVE_STD_ATOMIC 1
 
 /* Define to 1 if you have the `strdup' function. */
 #define HAVE_STRDUP 1
@@ -1081,7 +1081,7 @@
 #define HAVE_SYS_POLL_H 1
 
 /* Define to 1 if you have the <sys/random.h> header file. */
-/* #undef HAVE_SYS_RANDOM_H */
+#define HAVE_SYS_RANDOM_H 1
 
 /* Define to 1 if you have the <sys/resource.h> header file. */
 #define HAVE_SYS_RESOURCE_H 1
@@ -1150,7 +1150,7 @@
 #define HAVE_TERMIOS_H 1
 
 /* Define to 1 if you have the <term.h> header file. */
-/* #undef HAVE_TERM_H */
+#define HAVE_TERM_H 1
 
 /* Define to 1 if you have the `tgamma' function. */
 #define HAVE_TGAMMA 1
@@ -1220,13 +1220,13 @@
 /* #undef HAVE_UUID_ENC_BE */
 
 /* Define if uuid_generate_time_safe() exists. */
-/* #undef HAVE_UUID_GENERATE_TIME_SAFE */
+#define HAVE_UUID_GENERATE_TIME_SAFE 1
 
 /* Define to 1 if you have the <uuid.h> header file. */
 /* #undef HAVE_UUID_H */
 
 /* Define to 1 if you have the <uuid/uuid.h> header file. */
-/* #undef HAVE_UUID_UUID_H */
+#define HAVE_UUID_UUID_H 1
 
 /* Define to 1 if you have the `wait3' function. */
 #define HAVE_WAIT3 1
@@ -1263,10 +1263,10 @@
 #define HAVE_WRITEV 1
 
 /* Define if libssl has X509_VERIFY_PARAM_set1_host and related function */
-/* #undef HAVE_X509_VERIFY_PARAM_SET1_HOST */
+#define HAVE_X509_VERIFY_PARAM_SET1_HOST 1
 
 /* Define if the zlib library has inflateCopy */
-/* #undef HAVE_ZLIB_COPY */
+#define HAVE_ZLIB_COPY 1
 
 /* Define to 1 if you have the `_getpty' function. */
 /* #undef HAVE__GETPTY */
@@ -1280,10 +1280,10 @@
 
 /* Define to 1 if `major', `minor', and `makedev' are declared in
    <sysmacros.h>. */
-/* #undef MAJOR_IN_SYSMACROS */
+#define MAJOR_IN_SYSMACROS 1
 
 /* Define if mvwdelch in curses.h is an expression. */
-/* #undef MVWDELCH_IS_EXPRESSION */
+#define MVWDELCH_IS_EXPRESSION 1
 
 /* Define to the address where bug reports for this package should be sent. */
 /* #undef PACKAGE_BUGREPORT */
@@ -1412,7 +1412,7 @@
 #define TANH_PRESERVES_ZERO_SIGN 1
 
 /* Library needed by timemodule.c: librt may be needed for clock_gettime() */
-#define TIMEMODULE_LIB rt
+/* #undef TIMEMODULE_LIB */
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #define TIME_WITH_SYS_TIME 1
@@ -1446,7 +1446,7 @@
 
 
 /* Define if WINDOW in curses.h offers a field _flags. */
-/* #undef WINDOW_HAS_FLAGS */
+#define WINDOW_HAS_FLAGS 1
 
 /* Define if you want documentation strings in extension modules */
 #define WITH_DOC_STRINGS 1

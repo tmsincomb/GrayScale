@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.7
 srcdir=		.
 
-abs_srcdir=	/home/605/sincomb/hw4/Python-3.7.5
-abs_builddir=	/home/605/sincomb/hw4/Python-3.7.5
+abs_srcdir=	/home/tmsincomb/Dropbox/git/GrayScale/Python-3.7.5
+abs_builddir=	/home/tmsincomb/Dropbox/git/GrayScale/Python-3.7.5
 
 
 CC=		gcc -pthread
@@ -73,19 +73,19 @@ INSTALL_DATA=	${INSTALL} -m 644
 # Also, making them read-only seems to be a good idea...
 INSTALL_SHARED= ${INSTALL} -m 555
 
-MKDIR_P=	/bin/mkdir -p
+MKDIR_P=	/usr/bin/mkdir -p
 
 MAKESETUP=      $(srcdir)/Modules/makesetup
 
 # Compiler options
 OPT=		-DNDEBUG -g -fwrapv -O3 -Wall
-BASECFLAGS=	 -Wsign-compare
+BASECFLAGS=	 -Wno-unused-result -Wsign-compare
 BASECPPFLAGS=	
 CONFIGURE_CFLAGS=	
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
-CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Werror=implicit-function-declaration
+CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Wno-cast-function-type -Werror=implicit-function-declaration
 # LDFLAGS_NODIST is used in the same manner as CFLAGS_NODIST.
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
@@ -195,7 +195,7 @@ ENSUREPIP=      install
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
 OPENSSL_INCLUDES=
-OPENSSL_LIBS=
+OPENSSL_LIBS=-lssl -lcrypto
 OPENSSL_LDFLAGS=
 
 # Modes for directories, executables and data files created by the
@@ -205,7 +205,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--enable-optimizations' '--with-ensurepip=install'
+CONFIG_ARGS=	 '--enable-optimizations' '--with-ensurepip=install' '--with-zlib-dir=../zlib-1.2.11' 'PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig'
 
 
 # Subdirectories with code
@@ -230,7 +230,7 @@ LDLIBRARYDIR=
 INSTSONAME=	$(LDLIBRARY)
 
 
-LIBS=		-lcrypt -lpthread -ldl  -lutil -lrt
+LIBS=		-lcrypt -lpthread -ldl  -lutil
 LIBM=		-lm
 LIBC=		
 SYSLIBS=	$(LIBM) $(LIBC)
@@ -245,8 +245,8 @@ LIBOBJS=
 PYTHON=		python$(EXE)
 BUILDPYTHON=	python$(BUILDEXE)
 
-PYTHON_FOR_REGEN=python
-UPDATE_FILE=python $(srcdir)/Tools/scripts/update_file.py
+PYTHON_FOR_REGEN=python3.7
+UPDATE_FILE=python3.7 $(srcdir)/Tools/scripts/update_file.py
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 _PYTHON_HOST_PLATFORM=
 BUILD_GNU_TYPE=	x86_64-pc-linux-gnu
@@ -1800,7 +1800,7 @@ patchcheck: build_all
 
 # Dependencies
 
-Python/thread.o:  $(srcdir)/Python/thread_nt.h $(srcdir)/Python/thread_pthread.h
+Python/thread.o:  $(srcdir)/Python/thread_*.h
 
 # Declare targets that aren't real files
 .PHONY: all build_all sharedmods check-clean-src oldsharedmods test quicktest
