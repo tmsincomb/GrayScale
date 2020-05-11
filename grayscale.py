@@ -87,9 +87,9 @@ class ImageFilter:
         grayscale_filter = self.module.get_function('grayscale_filter')
 
         grayscale_filter(
-            driver.InOut(red_channel),
-            driver.InOut(green_channel),
-            driver.InOut(blue_channel),
+            cuda.InOut(red_channel),
+            cuda.InOut(green_channel),
+            cuda.InOut(blue_channel),
             np.uint32(width),
             np.uint32(height),
             block=(self.dim_block, self.dim_block, 1),
