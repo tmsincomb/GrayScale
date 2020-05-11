@@ -4,15 +4,15 @@
 Usage:
     ./grayscale.py  (-h | --help)
     ./grayscale.py  INPUT_IMAGE
-    ./grayscale.py  INPUT_IMAGE OUPUT_IMAGE
+    ./grayscale.py  [--DIM_BLOCK=<numeric_value>] INPUT_IMAGE OUPUT_IMAGE
 
 Arguments:
-    INPUT_IMAGE
-    OUPUT_IMAGE
+    INPUT_IMAGE                        Input GrayScaled JPG
+    OUPUT_IMAGE                        Output GrayScaled JPG
 
 Options:
-    -h, --help                Prints out usage examples.
-    -o, --output_path=PATH    Output Folder Path
+    -h, --help                         Prints out usage examples.
+    -d, --DIM_BLOCK=<numeric_value>    Output Folder Path [default: 32]
 
 Terminal Examples:
 
@@ -108,9 +108,10 @@ def main():
     args = docopt(__doc__)
     # Open image and returns uchar4 array.
     uchar4_array = create_uchar4_array_from_image_file(args['INPUT_IMAGE']) # uchar4 automatically
+    # Start GPU timer!
     time_start = time()
     # Returns altered image array with luminosity of -> (0.3 * R) + (0.59 * G) + (0.11 * B)
-    grayscale_array = ImageFilter(uchar4_array).grayscale
+    grayscale_array = ImageFilter(image_array=uchar4_array, dim_block=args['--DIM_BLOCK']).grayscale
     # Total time for GPU to have at it grayscaling the image.
     elapsed_time = time() - time_start
     # Create Pillow image object from new array.
@@ -120,7 +121,7 @@ def main():
     # Save to output path
     image.save(args['OUPUT_IMAGE'])
     # Prints elapsed seconds GPU took to convert to grayscale.
-    print(f'{elapsed_time}')
+    print(f'{round(elapsed_time, 5)}')
     # DEBUG: print(grayscale_array)
 
 
