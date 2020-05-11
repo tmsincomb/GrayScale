@@ -109,7 +109,9 @@ def main():
     # Open image and returns uchar4 array.
     uchar4_array = create_uchar4_array_from_image_file(image_file) # uchar4 automatically
     grayscale_array = ImageFilter(uchar4_array).grayscale
-    imgur.fromarray(grayscale_array).save(args['OUPUT_IMAGE'])
+    image = imgur.fromarray(grayscale_array)
+    image = image.convert('RGB')
+    image.save(args['OUPUT_IMAGE'])
     print(grayscale_array)
 
 
