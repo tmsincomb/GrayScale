@@ -84,7 +84,7 @@ class ImageFilter:
                 'image dimensions too great, maximum block number exceeded'
             )
 
-        grayscale_filter = self.src_module.get_function('grayscale_filter')
+        grayscale_filter = self.module.get_function('grayscale_filter')
 
         grayscale_filter(
             driver.InOut(red_channel),
