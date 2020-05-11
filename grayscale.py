@@ -106,12 +106,16 @@ def create_uchar4_array_from_image_file(image_file):
 
 def main():
     args = docopt(__doc__)
+    input_image = args['INPUT_IMAGE']
+    dim_block = int(args['--DIM_BLOCK'])
+    output_image = args['OUPUT_IMAGE']
+
     # Open image and returns uchar4 array.
-    uchar4_array = create_uchar4_array_from_image_file(args['INPUT_IMAGE']) # uchar4 automatically
+    uchar4_array = create_uchar4_array_from_image_file(image_file) # uchar4 automatically
     # Start GPU timer!
     time_start = time()
     # Returns altered image array with luminosity of -> (0.3 * R) + (0.59 * G) + (0.11 * B)
-    grayscale_array = ImageFilter(image_array=uchar4_array, dim_block=args['--DIM_BLOCK']).grayscale
+    grayscale_array = ImageFilter(image_array=uchar4_array, dim_block=dim_block).grayscale
     # Total time for GPU to have at it grayscaling the image.
     elapsed_time = time() - time_start
     # Create Pillow image object from new array.
@@ -119,7 +123,7 @@ def main():
     # JPG needs RGB by default
     image = image.convert('RGB')
     # Save to output path
-    image.save(args['OUPUT_IMAGE'])
+    image.save(output_image)
     # Prints elapsed seconds GPU took to convert to grayscale.
     print(f'{round(elapsed_time, 5)}')
     # DEBUG: print(grayscale_array)
