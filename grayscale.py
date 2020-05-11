@@ -22,10 +22,85 @@ Import Example:
 """
 from docopt import docopt
 import numpy as np
+import math
 import pycuda.driver as cuda
 import pycuda.autoinit # automatically inits backend for you
 from pycuda.compiler import SourceModule
 import PIL.Image as imgur
+
+
+class ImageFilter:
+
+    src_module = """
+        __global__ void grayscale_filter(unsigned char *red,
+                                    unsigned char *green,
+                                    unsigned char *blue,
+                                    const unsigned int width,
+                                    const unsigned int height) {
+            const unsigned int row = threadIdx.y + blockIdx.y * blockDim.y;
+            const unsigned int col = threadIdx.x + blockIdx.x * blockDim.x;
+
+            if(row < height && col < width) {
+                const unsigned int index = col + row * width;
+                const unsigned char intensity = static_cast<unsigned char>(
+                    red[index] * 0.3 + green[index] * 0.59 + blue[index] * 0.11
+                );
+                red[index] = intensity;
+                green[index] = intensity;
+                blue[index] = intensity;
+            }
+        }
+    """
+
+    def __init__(self, image_array, dim_block=32):
+        self.module = compiler.SourceModule(self.src_module)
+        self.image_array = image_array
+        self.dim_block = dim_block
+
+    @property
+    def grayscale(self):
+        result_array = np.empty_like(source_array)
+        red_channel = source_array[:, :, 0].copy()
+        green_channel = source_array[:, :, 1].copy()
+        blue_channel = source_array[:, :, 2].copy()
+
+        # (number of rows, number of columns, pixel vector size - here its 4 for rgba)
+        height, width, pixel_dimension = source_array.shape
+
+        dim_grid_x = math.ceil(width / self.dim_block)
+        dim_grid_y = math.ceil(height / self.dim_block)
+
+        max_num_blocks = (
+            pycuda.autoinit.device.get_attribute(
+                cuda.device_attribute.MAX_GRID_DIM_X
+            )
+            * pycuda.autoinit.device.get_attribute(
+                cuda.device_attribute.MAX_GRID_DIM_Y
+            )
+        )
+
+        if (dim_grid_x * dim_grid_y) > max_num_blocks:
+            raise ValueError(
+                'image dimensions too great, maximum block number exceeded'
+            )
+
+        grayscale_filter = self.src_module.get_function('grayscale_filter')
+
+        grayscale_filter(
+            driver.InOut(red_channel),
+            driver.InOut(green_channel),
+            driver.InOut(blue_channel),
+            np.uint32(width),
+            np.uint32(height),
+            block=(self.dim_block, self.dim_block, 1),
+            grid=(dim_grid_x, dim_grid_y)
+        )
+
+        result_array[:, :, 0] = red_channel
+        result_array[:, :, 1] = green_channel
+        result_array[:, :, 2] = blue_channel
+
+        return result_array
 
 
 def create_uchar4_array_from_image_file(image_file):
@@ -35,19 +110,14 @@ def create_uchar4_array_from_image_file(image_file):
     return source_array
 
 
-def grayscalify(uchar4_array):
-    """  """
-    return
-
-
 def main():
     args = docopt(__doc__)
+    ImageFilter()
     image_file = args['INPUT_IMAGE']
     # Open image and returns uchar4 array.
     uchar4_array = create_uchar4_array_from_image_file(image_file) # uchar4 automatically
-    # (number of rows, number of columns, pixel vector size - here its 4 for rgba)
-    height, width, pixel_dimension = uchar4_array.shape
-    print(uchar4_array)
+    grayscale_array = ImageFilter(uchar4_array).grayscale
+    print(grayscale_array)
 
 
 if __name__ == '__main__':
