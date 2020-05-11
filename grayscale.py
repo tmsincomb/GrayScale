@@ -106,8 +106,8 @@ class ImageFilter:
 def create_uchar4_array_from_image_file(image_file):
     """ Opens & Converts image to array of 4 unsigned 8-bit values """
     image = imgur.open(image_file) # Open image from path
-    self.image_array = np.array(image) # Pulls uchar meta from image object
-    return self.image_array
+    image_array = np.array(image) # Pulls uchar meta from image object
+    return image_array
 
 
 def main():
