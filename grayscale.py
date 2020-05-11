@@ -32,24 +32,23 @@ import PIL.Image as imgur
 class ImageFilter:
 
     src_module = """
-        __global__ void grayscale_filter(unsigned char *red,
-                                    unsigned char *green,
-                                    unsigned char *blue,
-                                    const unsigned int width,
-                                    const unsigned int height) {
-            const unsigned int row = threadIdx.y + blockIdx.y * blockDim.y;
-            const unsigned int col = threadIdx.x + blockIdx.x * blockDim.x;
-
-            if(row < height && col < width) {
-                const unsigned int index = col + row * width;
-                const unsigned char intensity = static_cast<unsigned char>(
-                    red[index] * 0.3 + green[index] * 0.59 + blue[index] * 0.11
-                );
-                red[index] = intensity;
-                green[index] = intensity;
-                blue[index] = intensity;
-            }
+    __global__ void grayscale_filter(unsigned char *red,
+                                     unsigned char *green,
+                                     unsigned char *blue,
+                                     const unsigned int height,
+                                     const unsigned int width) {
+        const unsigned int row = threadIdx.y + blockIdx.y * blockDim.y;
+        const unsigned int col = threadIdx.x + blockIdx.x * blockDim.x;
+        if(row < height && col < width) {
+            const unsigned int index = col + row * width;
+            const unsigned char intensity = static_cast<unsigned char>(
+                red[index] * 0.3 + green[index] * 0.59 + blue[index] * 0.11
+            );
+            red[index] = intensity;
+            green[index] = intensity;
+            blue[index] = intensity;
         }
+    }
     """
 
     def __init__(self, image_array, dim_block=32):
@@ -59,10 +58,11 @@ class ImageFilter:
 
     @property
     def grayscale(self):
-        result_array = np.empty_like(self.image_array)
-        red_channel = self.image_array[:, :, 0].copy()
-        green_channel = self.image_array[:, :, 1].copy()
-        blue_channel = self.image_array[:, :, 2].copy()
+
+        red = self.image_array[:, :, 0].copy()
+        green = self.image_array[:, :, 1].copy()
+        blue = self.image_array[:, :, 2].copy()
+        # self.image_array[:, :, 3] is the 4th pixel location reserved for opaqueness
 
         # (number of rows, number of columns, pixel vector size - here its 4 for rgba)
         height, width, pixel_dimension = self.image_array.shape
@@ -70,37 +70,30 @@ class ImageFilter:
         dim_grid_x = math.ceil(width / self.dim_block)
         dim_grid_y = math.ceil(height / self.dim_block)
 
-        max_num_blocks = (
-            pycuda.autoinit.device.get_attribute(
-                cuda.device_attribute.MAX_GRID_DIM_X
-            )
-            * pycuda.autoinit.device.get_attribute(
-                cuda.device_attribute.MAX_GRID_DIM_Y
-            )
-        )
+        max_grid_dim_x = pycuda.autoinit.device.get_attribute(cuda.device_attribute.MAX_GRID_DIM_X)
+        max_grid_dim_y = pycuda.autoinit.device.get_attribute(cuda.device_attribute.MAX_GRID_DIM_Y)
 
-        if (dim_grid_x * dim_grid_y) > max_num_blocks:
-            raise ValueError(
-                'image dimensions too great, maximum block number exceeded'
-            )
+        if (max_grid_dim_x * max_grid_dim_y) < (dim_grid_x * dim_grid_y):
+            raise ValueError('ERROR :: Image demensions :: Grid exceeds max')
 
         grayscale_filter = self.module.get_function('grayscale_filter')
 
         grayscale_filter(
-            cuda.InOut(red_channel),
-            cuda.InOut(green_channel),
-            cuda.InOut(blue_channel),
-            np.uint32(width),
+            cuda.InOut(red),
+            cuda.InOut(green),
+            cuda.InOut(blue),
             np.uint32(height),
+            np.uint32(width),
             block=(self.dim_block, self.dim_block, 1),
             grid=(dim_grid_x, dim_grid_y)
         )
 
-        result_array[:, :, 0] = red_channel
-        result_array[:, :, 1] = green_channel
-        result_array[:, :, 2] = blue_channel
+        grayscale_image_array = np.empty_like(self.image_array.copy())
+        grayscale_image_array[:, :, 0] = red
+        grayscale_image_array[:, :, 1] = green
+        grayscale_image_array[:, :, 2] = blue
 
-        return result_array
+        return grayscale_image_array
 
 
 def create_uchar4_array_from_image_file(image_file):
@@ -116,6 +109,7 @@ def main():
     # Open image and returns uchar4 array.
     uchar4_array = create_uchar4_array_from_image_file(image_file) # uchar4 automatically
     grayscale_array = ImageFilter(uchar4_array).grayscale
+    imgur.fromarray(grayscale_array).save(args['OUPUT_IMAGE'])
     print(grayscale_array)
 
 
