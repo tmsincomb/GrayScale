@@ -111,7 +111,7 @@ def main():
     output_image = args['OUPUT_IMAGE']
 
     # Open image and returns uchar4 array.
-    uchar4_array = create_uchar4_array_from_image_file(image_file) # uchar4 automatically
+    uchar4_array = create_uchar4_array_from_image_file(input_image) # uchar4 automatically
     # Start GPU timer!
     time_start = time()
     # Returns altered image array with luminosity of -> (0.3 * R) + (0.59 * G) + (0.11 * B)
