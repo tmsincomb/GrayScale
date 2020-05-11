@@ -1,5 +1,4 @@
 #!/home/605/sincomb/anaconda3/bin/python3
-# ./grayscale.py  [--output_path=PATH] INPUT_IMAGE
 """ Grayscale your image!
 
 Usage:
@@ -20,13 +19,15 @@ Terminal Examples:
 Import Example:
 
 """
-from docopt import docopt
-import numpy as np
-import math
-import pycuda.driver as cuda
-import pycuda.autoinit # automatically inits backend for you
-from pycuda.compiler import SourceModule
-import PIL.Image as imgur
+import math # Built-in Math library
+from time import time # Built-in time keeping library
+
+from docopt import docopt # Easy Command Line I/O Library
+import numpy as np # Linear alg library
+import pycuda.driver as cuda # Access GPU specifics
+import pycuda.autoinit # Automatically inits backend GPU stuffs for you
+from pycuda.compiler import SourceModule # Complie cuda kernals
+import PIL.Image as imgur # Amazing image processing library Pillow; OpenCV best for complex images
 
 
 class ImageFilter:
@@ -39,7 +40,7 @@ class ImageFilter:
                                      const unsigned int width) {
         const unsigned int row = threadIdx.y + blockIdx.y * blockDim.y;
         const unsigned int col = threadIdx.x + blockIdx.x * blockDim.x;
-        if(row < height && col < width) {
+        if ((row < height) && (col < width)) {
             const unsigned int index = col + row * width;
             const unsigned char intensity = static_cast<unsigned char>(
                 red[index] * 0.3 + green[index] * 0.59 + blue[index] * 0.11
@@ -49,7 +50,7 @@ class ImageFilter:
             blue[index] = intensity;
         }
     }
-    """
+    """ # Could have multiple __global__ kernals in here!
 
     def __init__(self, image_array, dim_block=32):
         self.module = SourceModule(self.src_module)
@@ -105,14 +106,22 @@ def create_uchar4_array_from_image_file(image_file):
 
 def main():
     args = docopt(__doc__)
-    image_file = args['INPUT_IMAGE']
     # Open image and returns uchar4 array.
-    uchar4_array = create_uchar4_array_from_image_file(image_file) # uchar4 automatically
+    uchar4_array = create_uchar4_array_from_image_file(args['INPUT_IMAGE']) # uchar4 automatically
+    time_start = time()
+    # Returns altered image array with luminosity of -> (0.3 * R) + (0.59 * G) + (0.11 * B)
     grayscale_array = ImageFilter(uchar4_array).grayscale
+    # Total time for GPU to have at it grayscaling the image.
+    elapsed_time = time() - time_start
+    # Create Pillow image object from new array.
     image = imgur.fromarray(grayscale_array)
+    # JPG needs RGB by default
     image = image.convert('RGB')
+    # Save to output path
     image.save(args['OUPUT_IMAGE'])
-    print(grayscale_array)
+    # Prints elapsed seconds GPU took to convert to grayscale.
+    print(f'{elapsed_time}')
+    # DEBUG: print(grayscale_array)
 
 
 if __name__ == '__main__':
