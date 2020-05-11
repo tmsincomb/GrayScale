@@ -53,19 +53,19 @@ class ImageFilter:
     """
 
     def __init__(self, image_array, dim_block=32):
-        self.module = compiler.SourceModule(self.src_module)
+        self.module = SourceModule(self.src_module)
         self.image_array = image_array
         self.dim_block = dim_block
 
     @property
     def grayscale(self):
-        result_array = np.empty_like(source_array)
-        red_channel = source_array[:, :, 0].copy()
-        green_channel = source_array[:, :, 1].copy()
-        blue_channel = source_array[:, :, 2].copy()
+        result_array = np.empty_like(self.image_array)
+        red_channel = self.image_array[:, :, 0].copy()
+        green_channel = self.image_array[:, :, 1].copy()
+        blue_channel = self.image_array[:, :, 2].copy()
 
         # (number of rows, number of columns, pixel vector size - here its 4 for rgba)
-        height, width, pixel_dimension = source_array.shape
+        height, width, pixel_dimension = self.image_array.shape
 
         dim_grid_x = math.ceil(width / self.dim_block)
         dim_grid_y = math.ceil(height / self.dim_block)
@@ -106,13 +106,12 @@ class ImageFilter:
 def create_uchar4_array_from_image_file(image_file):
     """ Opens & Converts image to array of 4 unsigned 8-bit values """
     image = imgur.open(image_file) # Open image from path
-    source_array = np.array(image) # Pulls uchar meta from image object
-    return source_array
+    self.image_array = np.array(image) # Pulls uchar meta from image object
+    return self.image_array
 
 
 def main():
     args = docopt(__doc__)
-    ImageFilter()
     image_file = args['INPUT_IMAGE']
     # Open image and returns uchar4 array.
     uchar4_array = create_uchar4_array_from_image_file(image_file) # uchar4 automatically
