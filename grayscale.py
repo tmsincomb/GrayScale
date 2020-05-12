@@ -100,11 +100,10 @@ class ImageFilter:
             grid=(dim_grid_x, dim_grid_y)
         )
         # Allocates array and it will not take the time to set the element values.
-        grayscale_image_array = np.array([red, green, blue])
-        # grayscale_image_array = np.empty_like(self.image_array.copy())
-        # grayscale_image_array[:, :, 0] = red
-        # grayscale_image_array[:, :, 1] = green
-        # grayscale_image_array[:, :, 2] = blue
+        grayscale_image_array = np.empty_like(self.image_array.copy())
+        grayscale_image_array[:, :, 0] = red
+        grayscale_image_array[:, :, 1] = green
+        grayscale_image_array[:, :, 2] = blue
 
         return grayscale_image_array
 
