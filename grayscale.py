@@ -42,7 +42,7 @@ class ImageFilter:
         const unsigned int col = threadIdx.x + blockIdx.x * blockDim.x;
 
         // If boundary hit don't keep going (i.e. grid * block exceed max)
-        if ((row < height) || (col < width)) return;
+        if ((row > height) || (col > width)) return;
 
         const unsigned int index = col + row * width;
         const unsigned char intensity = static_cast<unsigned char>(
