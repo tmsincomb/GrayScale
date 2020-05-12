@@ -12,7 +12,7 @@ Arguments:
 
 Options:
     -h, --help                         Prints out usage examples.
-    -d, --DIM_BLOCK=<numeric_value>    Output Folder Path [default: 32]
+    -d, --DIM_BLOCK=<numeric_value>    Block size for GPU squared [default: 16]
 
 Terminal Examples:
     ./grayscale.py example_image.jpg out.jpg
@@ -60,6 +60,9 @@ class ImageFilter:
         self.module = SourceModule(self.src_module)
         self.image_array = image_array
         self.dim_block = dim_block
+        # number of rows, number of columns, and pixel vector size - here its 4 for rgba
+        self.height, self.width, self.pixel_dimension = self.image_array.shape
+        self.image_size = self.height * self.width
 
     @property
     def grayscale(self):
@@ -70,12 +73,9 @@ class ImageFilter:
         green = np.copy(self.image_array[:, :, 1])
         blue = np.copy(self.image_array[:, :, 2])
 
-        # number of rows, number of columns, and pixel vector size - here its 4 for rgba
-        height, width, pixel_dimension = self.image_array.shape
-
-        # Adjust grid to specified block
-        dim_grid_x = math.ceil(width / self.dim_block)
-        dim_grid_y = math.ceil(height / self.dim_block)
+        # Adjust grid to specified block size
+        dim_grid_x = math.ceil(self.width / self.dim_block)
+        dim_grid_y = math.ceil(self.height / self.dim_block)
 
         # Determine max grid
         max_grid_dim_x = pycuda.autoinit.device.get_attribute(cuda.device_attribute.MAX_GRID_DIM_X)
@@ -84,6 +84,9 @@ class ImageFilter:
         # If grid determined from block size exceeds max grid, we have issues.
         if (max_grid_dim_x * max_grid_dim_y) < (dim_grid_x * dim_grid_y):
             raise ValueError('ERROR :: Image demensions :: Grid exceeds max')
+
+        # for easy sanity check tracking
+        self.grid_size = dim_grid_x * dim_grid_y
 
         # Call specific function from CUDA kernel
         grayscale_filter = self.module.get_function('grayscale_filter')
@@ -124,11 +127,14 @@ def main():
 
     # Open image and returns uchar4 array.
     uchar4_array = create_uchar4_array_from_image_file(input_image) # uchar4 automatically
+    height, width = uchar4_array.shape[:2]
+    image_size = height * width
 
     # Start GPU timer!
     time_start = time() # default is that it is in seconds
     # Returns altered image array with luminosity of -> (0.3 * R) + (0.59 * G) + (0.11 * B)
-    grayscale_array = ImageFilter(image_array=uchar4_array, dim_block=dim_block).grayscale
+    image_filter = ImageFilter(image_array=uchar4_array, dim_block=dim_block)
+    grayscale_array = image_filter.grayscale
     # Total time for GPU to have at it grayscaling the image.
     elapsed_time = time() - time_start
 
@@ -137,7 +143,7 @@ def main():
     # Save to output path
     image.save(output_image)
     # Prints elapsed seconds GPU took to convert to grayscale.
-    print(f'{round(elapsed_time, 5)}')
+    print(f'{image_filter.image_size}\t{dim_block**2}\t{image_filter.grid_size}\t{round(elapsed_time, 5)}')
     # DEBUG: print(grayscale_array)
 
 

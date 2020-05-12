@@ -13,7 +13,7 @@ Arguments:
 
 Options:
     -h, --help                         Prints out usage examples.
-    -d, --DIM_BLOCK=<numeric_value>    Output Folder Path [default: 32]
+    -d, --DIM_BLOCK=<numeric_value>    Block size for GPU squared [default: 16]
 
 Terminal Examples:
     ./grayscale.py example_image.jpg out.jpg
