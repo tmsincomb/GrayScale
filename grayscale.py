@@ -40,15 +40,14 @@ class ImageFilter:
                                      const unsigned int width) {
         const unsigned int row = threadIdx.y + blockIdx.y * blockDim.y;
         const unsigned int col = threadIdx.x + blockIdx.x * blockDim.x;
-        if ((row < height) && (col < width)) {
-            const unsigned int index = col + row * width;
-            const unsigned char intensity = static_cast<unsigned char>(
-                red[index] * 0.3 + green[index] * 0.59 + blue[index] * 0.11
-            );
-            red[index] = intensity;
-            green[index] = intensity;
-            blue[index] = intensity;
-        }
+        if ((row < height) || (col < width)) return;
+        const unsigned int index = col + row * width;
+        const unsigned char intensity = static_cast<unsigned char>(
+            red[index] * 0.3 + green[index] * 0.59 + blue[index] * 0.11
+        );
+        red[index] = intensity;
+        green[index] = intensity;
+        blue[index] = intensity;
     }
     """ # Could have multiple __global__ kernals in here!
 
@@ -59,20 +58,24 @@ class ImageFilter:
 
     @property
     def grayscale(self):
-
+        """ Convert Image to Grayscale: luminosity of -> (0.3 * R) + (0.59 * G) + (0.11 * B) """
         red = self.image_array[:, :, 0].copy()
         green = self.image_array[:, :, 1].copy()
         blue = self.image_array[:, :, 2].copy()
         # self.image_array[:, :, 3] is the 4th pixel location reserved for opaqueness
 
-        # (number of rows, number of columns, pixel vector size - here its 4 for rgba)
+        # number of rows, number of columns, and pixel vector size - here its 4 for rgba
         height, width, pixel_dimension = self.image_array.shape
 
         dim_grid_x = math.ceil(width / self.dim_block)
         dim_grid_y = math.ceil(height / self.dim_block)
+        print(dim_grid_x)
+        print(dim_grid_y)
 
         max_grid_dim_x = pycuda.autoinit.device.get_attribute(cuda.device_attribute.MAX_GRID_DIM_X)
         max_grid_dim_y = pycuda.autoinit.device.get_attribute(cuda.device_attribute.MAX_GRID_DIM_Y)
+        print(max_grid_dim_x)
+        print(max_grid_dim_y)
 
         if (max_grid_dim_x * max_grid_dim_y) < (dim_grid_x * dim_grid_y):
             raise ValueError('ERROR :: Image demensions :: Grid exceeds max')
@@ -85,7 +88,8 @@ class ImageFilter:
             cuda.InOut(blue),
             np.uint32(height),
             np.uint32(width),
-            block=(self.dim_block, self.dim_block, 1),
+            block=(16, 16, 1),
+            # block=(self.dim_block, self.dim_block, 1),
             grid=(dim_grid_x, dim_grid_y)
         )
 
@@ -107,7 +111,7 @@ def create_uchar4_array_from_image_file(image_file):
 def main():
     args = docopt(__doc__)
     input_image = args['INPUT_IMAGE']
-    dim_block = int(args['--DIM_BLOCK'])
+    dim_block = int(args['--DIM_BLOCK']) # default is 32; needs to be multiple of 32
     output_image = args['OUPUT_IMAGE']
 
     # Open image and returns uchar4 array.
@@ -120,7 +124,7 @@ def main():
     elapsed_time = time() - time_start
     # Create Pillow image object from new array.
     image = imgur.fromarray(grayscale_array)
-    # JPG needs RGB by default
+    # JPG needs RGB by default; best to force it incase image is RGBA
     image = image.convert('RGB')
     # Save to output path
     image.save(output_image)
