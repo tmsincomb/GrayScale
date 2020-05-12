@@ -1,5 +1,5 @@
 # GrayScale
-```python3
+```
 Grayscale your image!
 
 Usage:
