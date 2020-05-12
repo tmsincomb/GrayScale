@@ -66,6 +66,8 @@ class ImageFilter:
 
         # number of rows, number of columns, and pixel vector size - here its 4 for rgba
         height, width, pixel_dimension = self.image_array.shape
+        print(height)
+        print(width)
 
         dim_grid_x = math.ceil(width / self.dim_block)
         dim_grid_y = math.ceil(height / self.dim_block)
@@ -88,8 +90,8 @@ class ImageFilter:
             cuda.InOut(blue),
             np.uint32(height),
             np.uint32(width),
-            block=(16, 16, 1),
-            # block=(self.dim_block, self.dim_block, 1),
+            # block=(16, 16, 1),
+            block=(self.dim_block, self.dim_block, 1),
             grid=(dim_grid_x, dim_grid_y)
         )
 
