@@ -63,7 +63,9 @@ class ImageFilter:
     def grayscale(self):
         """ Convert Image to Grayscale: luminosity of -> (0.3 * R) + (0.59 * G) + (0.11 * B) """
         # Copy dimension as to not write over address for future call.
-        red, green, blue = np.copy(self.image_array[:, :, :])
+        red = np.copy(self.image_array[:, :, 0])
+        green = np.copy(self.image_array[:, :, 1])
+        blue = np.copy(self.image_array[:, :, 2])
 
         # number of rows, number of columns, and pixel vector size - here its 4 for rgba
         height, width, pixel_dimension = self.image_array.shape
