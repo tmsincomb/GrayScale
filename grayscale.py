@@ -60,6 +60,8 @@ class ImageFilter:
         self.module = SourceModule(self.src_module)
         self.image_array = image_array
         self.dim_block = dim_block
+        self.block_size = dim_block**2 # square block used i.e. (16, 16, 1)
+        self.grid_size = None # last filter grid used
         # number of rows, number of columns, and pixel vector size - here its 4 for rgba
         self.height, self.width, self.pixel_dimension = self.image_array.shape
         self.image_size = self.height * self.width
@@ -96,8 +98,8 @@ class ImageFilter:
             cuda.InOut(red),
             cuda.InOut(green),
             cuda.InOut(blue),
-            np.uint32(height),
-            np.uint32(width),
+            np.uint32(self.height),
+            np.uint32(self.width),
             block=(self.dim_block, self.dim_block, 1),
             grid=(dim_grid_x, dim_grid_y)
         )
@@ -136,14 +138,15 @@ def main():
     image_filter = ImageFilter(image_array=uchar4_array, dim_block=dim_block)
     grayscale_array = image_filter.grayscale
     # Total time for GPU to have at it grayscaling the image.
-    elapsed_time = time() - time_start
+    elapsed_time = round((time() - time_start), 5)
 
     # Create Pillow image object from new array.
     image = imgur.fromarray(grayscale_array)
     # Save to output path
     image.save(output_image)
     # Prints elapsed seconds GPU took to convert to grayscale.
-    print(f'{image_filter.image_size}\t{dim_block**2}\t{image_filter.grid_size}\t{round(elapsed_time, 5)}')
+    # image_size | block_size | grid_size | time (seconds)
+    print(f'{image_filter.image_size}\t{image_filter.block_size}\t{image_filter.grid_size}\t{elapsed_time}')
     # DEBUG: print(grayscale_array)
 
 
