@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -o /home/605/sincomb/hw4/times.txt
+#PBS -l nodes=node10
+#PBS -l walltime=10:00
+#PBS -N sincomb
+#PBS -j oe
+
+
+echo -e "image_size\tblock_size\tgrid_size\ttime"
+for i in {1..32}
+do
+    /home/605/sincomb/hw4/./grayscale.py -d $i /home/605/sincomb/hw4/images/puppy-large.jpg out.jpg
+done 
